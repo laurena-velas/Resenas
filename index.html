@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiencias Laurena</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f9f6f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #4a3e3d;
+        }
+
+        /* Contenedor Principal */
+        .main-container {
+            background-color: #f9f6f1;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 1000px;
+            padding: 40px 20px;
+            box-shadow: 0 8px 24px rgba(74, 62, 61, 0.05);
+            text-align: center;
+            position: relative;
+        }
+
+        /* Top Badge */
+        .top-rating-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: #faf6f0;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            margin-bottom: 25px;
+            gap: 8px;
+            color: #4a3e3d;
+            justify-content: center;
+        }
+
+        .heart-icon {
+            background-color: #efe6da;
+            color: #c49a6c;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        /* Estrellas Base (Garantiza color amarillo/dorado en todo el sitio) */
+        .stars {
+            color: #e5a93b !important;
+            font-size: 16px;
+            display: inline-block;
+        }
+
+        .divider {
+            color: #d1c7bd;
+            margin: 0 4px;
+        }
+
+        /* Encabezado Principal */
+        .header-title {
+            font-family: 'Georgia', serif;
+            font-size: 32px;
+            font-weight: normal;
+            color: #3d4a41;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .sparkle {
+            color: #c49a6c;
+            font-size: 20px;
+        }
+
+        .header-subtitle {
+            font-size: 15px;
+            color: #7a6e67;
+            margin-bottom: 35px;
+        }
+
+        /* Estructura del Carrusel */
+        .carousel-section {
+            display: block;
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .carousel-content {
+            overflow: hidden;
+            width: 100%;
+            max-width: 860px;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.4s ease-in-out;
+            gap: 20px;
+        }
+
+        /* SECCIÓN DE TODAS LAS RESEÑAS (VISTA GRID) */
+        .all-reviews-section {
+            display: none;
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 30px;
+            border-radius: 16px;
+        }
+
+        /* Contenedor de 3 Columnas */
+        .reviews-grid {
+            display: block;
+            text-align: left;
+        }
+
+        .grid-column {
+            display: block;
+            float: left;
+            width: calc(33.333% - 14px);
+            margin: 7px;
+        }
+
+        @media (max-width: 850px) {
+            .grid-column {
+                width: calc(50% - 14px);
+            }
+        }
+
+        @media (max-width: 550px) {
+            .grid-column {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+
+        .reviews-grid::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Tarjeta de Reseña (Compartida para Carrusel y Grid) */
+        .review-card {
+            background-color: #faf6f0;
+            border-radius: 16px;
+            padding: 24px 20px;
+            width: 100%;
+            display: block;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+        }
+
+        /* Ajuste específico para cuando la tarjeta está dentro del carrusel fijo */
+        .carousel-track .review-card {
+            min-width: calc(33.333% - 14px);
+            max-width: calc(33.333% - 14px);
+            flex-shrink: 0;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        @media (max-width: 850px) {
+            .carousel-track .review-card {
+                min-width: calc(50% - 10px);
+                max-width: calc(50% - 10px);
+            }
+        }
+
+        @media (max-width: 550px) {
+            .carousel-track .review-card {
+                min-width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        /* Contenedor para alinear estrellas y número en la misma línea */
+        .review-card .stars-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        /* Estrellas específicas de la tarjeta interna */
+        .review-card .stars {
+            color: #e5a93b !important;
+            font-size: 18px;
+            display: inline-block;
+        }
+
+        /* Estilo para el número de calificación al lado de las estrellas */
+        .review-card .rating-number {
+            font-size: 14px;
+            font-weight: bold;
+            color: #7a6e67;
+            margin-top: 2px;
+        }
+
+        /* Texto del testimonio */
+        .review-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #5a4e4d;
+            font-style: italic;
+            margin-bottom: 25px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 125px;
+            height: 125px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 2px solid #efe6da;
+            box-shadow: 0 3px 8px rgba(74, 62, 61, 0.05);
+        }
+
+        .reviewer-name {
+            font-family: 'Georgia', serif;
+            font-size: 17px;
+            color: #4a3e3d;
+            margin-bottom: 4px;
+        }
+
+        .verified-badge {
+            font-size: 11px;
+            color: #c49a6c;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        /* Flechas de Navegación */
+        .nav-arrow {
+            background-color: #efe6da;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #4a3e3d;
+            font-size: 16px;
+            transition: background-color 0.2s;
+            position: absolute;
+            z-index: 10;
+        }
+
+        .nav-arrow:hover { background-color: #e5dad0; }
+        .arrow-left { left: 0; }
+        .arrow-right { right: 0; }
+
+        /* Indicadores de Puntos */
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #d8cdbf;
+            cursor: pointer;
+        }
+
+        .dot.active { background-color: #7a6e67; }
+
+        /* Botones de Acción Inferiores */
+        .view-all-btn, .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: transparent;
+            border: 1px solid #7a6e67;
+            padding: 10px 24px;
+            border-radius: 25px;
+            font-size: 13px;
+            color: #4a3e3d;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .view-all-btn:hover, .back-btn:hover {
+            background-color: rgba(122, 110, 103, 0.05);
+        }
+
+        /* Personalización de la barra de desplazamiento interna (Scrollbar) */
+        .all-reviews-section::-webkit-scrollbar {
+            width: 6px;
+        }
+        .all-reviews-section::-webkit-scrollbar-track {
+            background: #efe6da;
+            border-radius: 10px;
+        }
+        .all-reviews-section::-webkit-scrollbar-thumb {
+            background: #7a6e67;
+            border-radius: 10px;
+        }
+
+        /* ==================================================
+           ENCABEZADO LAURENA — SIN LOGO
+           ================================================== */
+        :root {
+            --laurena-header-bg: #f8f3ec;
+            --laurena-page-bg: #f9f6f1;
+            --laurena-text: #4a4a42;
+            --laurena-line: #ddd4c9;
+        }
+
+        body {
+            background-color: var(--laurena-page-bg);
+            padding-top: 82px;
+        }
+
+        .laurena-header {
+            position: fixed;
+            inset: 0 0 auto 0;
+            z-index: 1000;
+            background: var(--laurena-header-bg);
+            border-top: 1px solid #908980;
+            border-bottom: 1px solid rgba(221, 212, 201, 0.72);
+            box-shadow: 0 2px 10px rgba(74, 62, 61, 0.025);
+        }
+
+        .laurena-nav {
+            width: 100%;
+            max-width: 1120px;
+            min-height: 80px;
+            margin: 0 auto;
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .laurena-menu {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            white-space: nowrap;
+        }
+
+        .laurena-menu a {
+            position: relative;
+            flex: 0 0 auto;
+            color: var(--laurena-text);
+            text-decoration: none;
+            font-family: Georgia, serif;
+            font-size: clamp(17px, 1.55vw, 23px);
+            line-height: 1;
+            padding: 12px 0 11px;
+        }
+
+        .laurena-menu a::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: 3px;
+            width: 0;
+            height: 1px;
+            background: currentColor;
+            transition: width 0.2s ease, left 0.2s ease;
+        }
+
+        .laurena-menu a:hover::after,
+        .laurena-menu a.activo::after {
+            width: 100%;
+            left: 0;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding-top: 76px;
+            }
+
+            .laurena-nav {
+                min-height: 74px;
+                padding: 0 18px;
+            }
+
+            .laurena-menu {
+                gap: 0;
+            }
+
+            .laurena-menu a {
+                font-size: clamp(12px, 3.15vw, 15px);
+                padding: 11px 0 10px;
+            }
+        }
+
+        @media (max-width: 390px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .laurena-nav {
+                min-height: 68px;
+                padding: 0 12px;
+            }
+
+            .laurena-menu a {
+                font-size: 11.5px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!--
+      IMPORTANTE:
+      Reemplaza TU_URL_INICIO, TU_URL_CATALOGO,
+      TU_URL_FORMAS_PAGO y TU_URL_PEDIDO por tus enlaces de Canva.
+    -->
+    <!-- Encabezado de navegación Laurena -->
+    <header class="laurena-header">
+        <nav class="laurena-nav" aria-label="Navegación principal">
+<div class="laurena-menu">
+                <a href="https://luz-y-esencia.my.canva.site/laurena" target="_top">Inicio</a>
+                <a href="https://luz-y-esencia.my.canva.site/laurena-catalogo" target="_top">Catálogo</a>
+                <a href="#" class="activo" aria-current="page">Reseñas</a>
+                <a href="https://luz-y-esencia.my.canva.site/medios-de-pago" target="_top">Formas de pago</a>
+                <a href="https://form.jotform.com/sarushvans/laurena---pedidos" target="_top">Haz tu pedido</a>
+            </div>
+</nav>
+    </header>
+
+
+    <div class="main-container">
+        <!-- Calificación General Dinámica -->
+        <div class="top-rating-badge">
+            <span class="heart-icon">♥</span>
+            <span class="stars" id="topStars">★★★★★</span>
+            <span id="topAverage">—/5</span>
+            <span class="divider">|</span>
+            <span><span id="topCount">0</span> reseñas verificadas 
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </span>
+        </div>
+
+        <h1 class="header-title">
+            <span class="sparkle">✦</span> Experiencias Laurena <span class="sparkle">✦</span>
+        </h1>
+        <p class="header-subtitle" id="dynamicSubtitle">Lo que dicen nuestros clientes</p>
+
+        <div class="carousel-section" id="carouselSection">
+            <div class="carousel-wrapper">
+                <button class="nav-arrow arrow-left" onclick="moveCarousel(-1)">‹</button>
+                
+                <div class="carousel-content">
+                    <div class="carousel-track" id="carouselTrack">
+                        <div class="review-card">
+                            <p class="review-text">Cargando testimonios hermosos...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="nav-arrow arrow-right" onclick="moveCarousel(1)">›</button>
+            </div>
+
+            <div class="carousel-dots" id="carouselDots"></div>
+
+            <button class="view-all-btn" onclick="toggleViews(true)">
+                Ver todas las reseñas <span>›</span>
+            </button>
+        </div>
+
+        <div class="all-reviews-section" id="allReviewsSection">
+            <div class="reviews-grid" id="reviewsGrid">
+                <div class="grid-column" id="col0"></div>
+                <div class="grid-column" id="col1"></div>
+                <div class="grid-column" id="col2"></div>
+            </div>
+
+            <button class="back-btn" onclick="toggleViews(false)">
+                ‹ Volver al carrusel
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentIndex = 0;
+        let totalCards = 0;
+        let cardsPerView = 3;
+        let globalReviewsData = [];
+
+        function updateCardsPerView() {
+            if (window.innerWidth <= 550) cardsPerView = 1;
+            else if (window.innerWidth <= 850) cardsPerView = 2;
+            else cardsPerView = 3;
+            setupDots();
+            moveCarousel(0);
+        }
+
+        // Renderiza los promedios reales y las tarjetas
+        function renderReviews(response) {
+            // Extraemos los datos calculados por el servidor
+            const reviews = response.lista || [];
+            const promedio = response.promedio || "5.0";
+            const totalAprobadas = response.totalAprobadas || 0;
+            
+            globalReviewsData = reviews;
+            totalCards = reviews.length;
+
+            // 1. ACTUALIZAR PANEL SUPERIOR DE PROMEDIOS
+            document.getElementById('topAverage').innerText = `${promedio}/5`;
+            document.getElementById('topCount').innerText = totalAprobadas;
+            
+            // Renderizar estrellas del promedio redondeado
+            const estrellasPromedioNum = Math.round(Number(promedio));
+            document.getElementById('topStars').innerText = '★'.repeat(estrellasPromedioNum) + '☆'.repeat(5 - estrellasPromedioNum);
+
+            // 2. GENERAR CARRUSEL
+            const track = document.getElementById('carouselTrack');
+            track.innerHTML = '';
+
+            // 3. LIMPIAR COLUMNAS DE LA CUADRÍCULA
+            const col0 = document.getElementById('col0');
+            const col1 = document.getElementById('col1');
+            const col2 = document.getElementById('col2');
+            col0.innerHTML = ''; col1.innerHTML = ''; col2.innerHTML = '';
+
+            if (reviews.length === 0) {
+                track.innerHTML = '<div class="review-card"><p class="review-text">Pronto verás aquí nuestras experiencias.</p></div>';
+                return;
+            }
+
+            reviews.forEach((item, index) => {
+    const starsNum = Number(item.estrellas || 5);
+    const starString = '★'.repeat(starsNum) + '☆'.repeat(5 - starsNum);
+    const imgUrl = item.foto || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&q=80&w=150';
+
+    const cardHtml = `
+        <div>
+            <div class="stars-wrapper">
+                <div class="stars">${starString}</div>
+                <span class="rating-number">${starsNum.toFixed(1)}</span>
+            </div>
+            <p class="review-text">"${item.texto}"</p>
+        </div>
+        <div style="text-align: center; margin-top: auto;">
+            <img src="${imgUrl}" class="profile-img" alt="${item.nombre}">
+            <h3 class="reviewer-name">${item.nombre}</h3>
+            <div class="verified-badge">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Compra verificada
+            </div>
+        </div>
+    `;
+
+    // Añadir al Carrusel
+    const carouselCard = document.createElement('div');
+    carouselCard.className = 'review-card';
+    carouselCard.innerHTML = cardHtml;
+    track.appendChild(carouselCard);
+
+    // Añadir a la cuadrícula de 3 columnas
+    const gridCard = document.createElement('div');
+    gridCard.className = 'review-card';
+    gridCard.innerHTML = cardHtml;
+    
+    if (index % 3 === 0) col0.appendChild(gridCard);
+    else if (index % 3 === 1) col1.appendChild(gridCard);
+    else col2.appendChild(gridCard);
+});
+
+            updateCardsPerView();
+        }
+
+        // Alternar entre Vista Carrusel y Vista Todas las Reseñas
+        function toggleViews(showAll) {
+            const carouselSec = document.getElementById('carouselSection');
+            const allReviewsSec = document.getElementById('allReviewsSection');
+            const subtitle = document.getElementById('dynamicSubtitle');
+
+            if (showAll) {
+                carouselSec.style.display = 'none';
+                allReviewsSec.style.display = 'block';
+                subtitle.innerText = "Galería completa de opiniones";
+                // Hace scroll automático al inicio de la sección de reseñas
+                allReviewsSec.scrollTop = 0;
+            } else {
+                carouselSec.style.display = 'block';
+                allReviewsSec.style.display = 'none';
+                subtitle.innerText = "Lo que dicen nuestros clientes";
+                moveCarousel(0);
+            }
+        }
+
+        function setupDots() {
+            const dotsContainer = document.getElementById('carouselDots');
+            dotsContainer.innerHTML = '';
+            const maxIndex = Math.max(0, totalCards - cardsPerView);
+            
+            for (let i = 0; i <= maxIndex; i++) {
+                const dot = document.createElement('div');
+                dot.className = `dot ${i === currentIndex ? 'active' : ''}`;
+                dot.onclick = () => jumpToSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function moveCarousel(direction) {
+            const track = document.getElementById('carouselTrack');
+            const maxIndex = Math.max(0, totalCards - cardsPerView);
+            
+            currentIndex += direction;
+            if (currentIndex < 0) currentIndex = 0;
+            if (currentIndex > maxIndex) currentIndex = maxIndex;
+
+            const cardElement = document.querySelector('.carousel-track .review-card');
+            if (cardElement) {
+                const cardWidth = cardElement.offsetWidth;
+                track.style.transform = `translateX(-${currentIndex * (cardWidth + 20)}px)`;
+            }
+
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, idx) => {
+                if (idx === currentIndex) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+        }
+
+        function jumpToSlide(index) {
+            currentIndex = index;
+            moveCarousel(0);
+        }
+
+        // ==================================================
+        // CONEXIÓN PÚBLICA CON APPS SCRIPT DESDE GITHUB PAGES
+        // ==================================================
+        const URL_API_RESENAS =
+            'https://script.google.com/macros/s/AKfycbyE7yae52rnoAJyxxt403PWzQZ0i7ckLak0Z23PB_3myuacw2ohFj1fo1n5H20jgQh5/exec?api=resenas';
+
+        let versionResenasRegistrada = '';
+        let primerCargadoPublico = true;
+        let consultaResenasEnCurso = false;
+        let temporizadorConsulta = null;
+
+        function recibirResenasLaurena(response) {
+            consultaResenasEnCurso = false;
+
+            if (temporizadorConsulta) {
+                clearTimeout(temporizadorConsulta);
+                temporizadorConsulta = null;
+            }
+
+            const nuevaVersion = response && response.version
+                ? response.version
+                : '';
+
+            if (
+                primerCargadoPublico ||
+                nuevaVersion !== versionResenasRegistrada
+            ) {
+                versionResenasRegistrada = nuevaVersion;
+                primerCargadoPublico = false;
+                renderReviews(response || {
+                    lista: [],
+                    promedio: '0.0',
+                    totalAprobadas: 0,
+                    version: ''
+                });
+            }
+        }
+
+        function verificarActualizacionesPublicas() {
+            if (consultaResenasEnCurso) return;
+
+            consultaResenasEnCurso = true;
+
+            const scriptAnterior =
+                document.getElementById('laurena-api-resenas');
+
+            if (scriptAnterior) scriptAnterior.remove();
+
+            const script = document.createElement('script');
+            script.id = 'laurena-api-resenas';
+            script.async = true;
+            script.src =
+                URL_API_RESENAS +
+                '&callback=recibirResenasLaurena' +
+                '&t=' +
+                Date.now();
+
+            script.onerror = function() {
+                consultaResenasEnCurso = false;
+                console.error(
+                    'No fue posible cargar las reseñas desde Apps Script.'
+                );
+            };
+
+            document.body.appendChild(script);
+
+            temporizadorConsulta = setTimeout(function() {
+                consultaResenasEnCurso = false;
+                console.error(
+                    'La consulta de reseñas tardó demasiado.'
+                );
+            }, 15000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarActualizacionesPublicas();
+
+            window.addEventListener(
+                'resize',
+                updateCardsPerView
+            );
+
+            setInterval(
+                verificarActualizacionesPublicas,
+                60000
+            );
+        });
+    </script>
+</body>
+</html>
