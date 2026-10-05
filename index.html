@@ -448,6 +448,12 @@
         }
 
     </style>
+
+<style>
+#bannerTemporada {text-align:center;padding:18px 16px;font:clamp(20px,3vw,32px) Georgia,serif;overflow-wrap:anywhere}
+#bannerTemporada[hidden], #enlaceTemporada[hidden] {display:none!important}
+#enlaceTemporada {font-family:Georgia,serif}
+</style>
 </head>
 <body>
 
@@ -458,9 +464,11 @@
     -->
     <!-- Encabezado de navegación Laurena -->
     <header class="laurena-header">
+<div id="bannerTemporada" hidden></div>
         <nav class="laurena-nav" aria-label="Navegación principal">
 <div class="laurena-menu">
                 <a href="https://luz-y-esencia.my.canva.site/laurena" target="_top">Inicio</a>
+<a id="enlaceTemporada" hidden target="_top"></a>
                 <a href="https://luz-y-esencia.my.canva.site/laurena-catalogo" target="_top">Catálogo</a>
                 <a href="#" class="activo" aria-current="page">Reseñas</a>
                 <a href="https://luz-y-esencia.my.canva.site/medios-de-pago" target="_top">Formas de pago</a>
@@ -682,6 +690,7 @@
         let temporizadorConsulta = null;
 
         function recibirResenasLaurena(response) {
+            aplicarTemporada(response && response.temporada);
             consultaResenasEnCurso = false;
 
             if (temporizadorConsulta) {
@@ -758,5 +767,30 @@
             );
         });
     </script>
+
+<script>
+function colorTextoTemporada(hex) {
+  const rgb = hex.slice(1).match(/../g).map(v => parseInt(v,16)/255).map(v => v <= .04045 ? v/12.92 : Math.pow((v+.055)/1.055,2.4));
+  return (.2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2]) > .179 ? '#211b24' : '#ffffff';
+}
+function aplicarTemporada(config) {
+  if (!config) return;
+  const banner = document.getElementById('bannerTemporada');
+  const enlace = document.getElementById('enlaceTemporada');
+  const b = config.banner || {}, c = config.catalogo || {};
+  banner.hidden = b.activo !== true;
+  banner.textContent = [b.icono,b.texto].filter(Boolean).join(' ');
+  if (/^#[0-9a-f]{6}$/i.test(b.color || '')) {
+    banner.style.backgroundColor = b.color;
+    banner.style.color = colorTextoTemporada(b.color);
+  }
+  let url;
+  try {url = new URL(c.url); } catch(e) {url = null;}
+  enlace.hidden = !(c.activo === true && url && url.protocol === 'https:');
+  enlace.textContent = [c.texto,c.icono].filter(Boolean).join(' ');
+  if (url && url.protocol === 'https:') enlace.href = url.href;
+  if (/^#[0-9a-f]{6}$/i.test(c.color || '')) enlace.style.color = c.color;
+}
+</script>
 </body>
 </html>
